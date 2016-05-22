@@ -4,7 +4,7 @@ webscreenshot
 ## Installation
 
 ```
-$ git@github.com:jnreynoso/webscreenshot.git
+$ git clone git@github.com:jnreynoso/webscreenshot.git
 ```
 ### Pre-requisites
 
@@ -17,16 +17,16 @@ $ git@github.com:jnreynoso/webscreenshot.git
    
 ## Usage
 
-`Invoke`
+`Install webkit2png`
 ```
 $ invoke install
 ```
-`or`
+`Start Web Server port 8080`
 ```
 $ invoke runserver
 
 ```
-`or`
+`All (Install and Start Web Server)`
 ```
 $ invoke install runserver
 ```
