@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <title>Webscreenshot</title>
+  <meta charset="utf-8" />
+  <link rel="shortcut icon" href="favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body class="content">
+  <header>
+    <h1 class="title">webscreenshot</h1>
+  </header>
+  <div>
+    <div>
+      <p>Webscreenshot sirve para capturar en una imagen cualquier sitio de internet.
+      <h2>¿Cómo lo hago?</h2>
+      <p>Puedes obtener un screenshot de cualquier paguina accediendo a cualquiera de las siguientes direcciones:</p>
+      <ul>
+        <li><a href="/image?url=http://www.google.com">/image?url=http://www.google.com</a></li>
+        <br/>
+        <li><a href="/image/geturl?url=http://www.google.com">/image/geturl?url=http://www.google.com</a></li>
+      </ul>
+      <p>Actualmente <spam class="code"><b>/image</b></spam> tarda un poco en responder, especialmente cuando las dimensiones del screenshot son mayores a <spam class="code"><b>800 x 512 pixeles</b></spam>. Si no deseas esperar, puedes usar <spam class="code"><b>/image/geturl</b></spam> para obtener la dirección de dónde se ubicará el recurso y posteriormente ingresar.</p>
+    </div>
+    <div>
+      <h2>Opciones:</h2>
+      <p>Puedes agregarle estas opciones al screenshot.</p>
+      <div class="options">
+        <h3>url (sitio a capturar)</h3>
+        <p>Direccion del website a capturar.</p>
+        <h5>Ejemplo:</h5>
+        <p><a href="/image?url=http://www.google.com">/image?url=http://www.google.com</a></p>
+        <p><a href="/image?url=http://www.facebook.com">/image?url=http://www.facebook.com</a></p>
+      </div>
+      <div class="options">
+        <h3>width and height (dimensiones)</h3>
+        <p>Dimensión de la pantalla en pixeles.</p>
+        <h5>Ejemplo:</h5>
+        <p><a href="/image?url=http://www.google.com&width=1024">/image?url=http://www.google.com&width=1024</a></p>
+        <p><a href="/image?url=http://www.google.com&width=1024&height=768">/image?url=http://www.google.com&width=1024&height=768</a></p>
+      </div>
+      <div class="options">
+        <h3>wait (segundos)</h4>
+        <p>Tiempo de espera antes de que se haga el screenshot.</p>
+        <h5>Ejemplo:</h5>
+        <p><a href="/image?url=http://www.google.com&wait=10">/image?url=http://www.google.com&wait=10</a></p>
+        <p><a href="/image?url=http://www.google.com&width=1024&height=768&wait=20">/image?url=http://www.google.com&width=1024&height=768&wait=20</a></p>
+      </div>
+      <div class="options">
+        <h3>transparent</h4>
+        <p>Fondo transparente (El fondo definido en el html debe ser transparente).</p>
+        <h5>Ejemplo:</h5>
+        <p><a href="/image?url=http://www.google.com&transparent=true">/image?url=http://www.google.com&transparent=true</a></p>
+      </div>
+      <div class="options">
+        <h3>aspect</h3>
+        <p>Cualquier de los siguientes parametros son permitidos: 'ignore', 'keep', 'crop' ó 'expand'.</p>
+        <h5>Ejemplo:</h5>
+        <p><a href="/image?url=http://www.google.com&aspect=expand">/image?url=http://www.google.com&aspect=expand</a></p>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
