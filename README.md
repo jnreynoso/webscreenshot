@@ -20,6 +20,13 @@ $ git@github.com:jnreynoso/webscreenshot.git
 `Invoke`
 ```
 $ invoke install
+```
+or
+```
 $ invoke runserver
+
+```
+or
+```
 $ invoke install runserver
 ```
