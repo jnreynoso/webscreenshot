@@ -1,12 +1,14 @@
 webscreenshot
 ==================
 
-## Installation
+Installation
+------------
 
 ```
 $ git clone git@github.com:jnreynoso/webscreenshot.git
 ```
-### Pre-requisites
+Pre-requisites
+--------------
 
     # Python 2.7
     # Invoke
@@ -15,18 +17,19 @@ $ git clone git@github.com:jnreynoso/webscreenshot.git
 
     # pip install invoke
    
-## Usage
+Usage
+-----
 
-`Install webkit2png`
+### Install webkit2png` ###
 ```
 $ invoke install
 ```
-`Start Web Server port 8080`
+### Start Web Server port 8080 ###
 ```
 $ invoke runserver
 
 ```
-`All (Install and Start Web Server)`
+### All (Install and Start Web Server) ###
 ```
 $ invoke install runserver
 ```
