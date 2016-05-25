@@ -30,6 +30,7 @@ def install_webkit2png(system="Linux"):
         run("sudo apt-get install python-qt4 libqt4-webkit xvfb")
         run("sudo apt-get install flashplugin-installer")
         run("sudo apt-get install git-core")
+        run("sudo pip install Flask")
         run("mkdir python-webkit2png")
         run("git clone https://github.com/adamn/python-webkit2png.git python-webkit2png")
         run("cd python-webkit2png && sudo python setup.py install")
@@ -48,5 +49,5 @@ def install():
 
 @task
 def runserver():
-    run("mkdir -p screenshots")
+    run("mkdir -p static/screenshots")
     start_server()

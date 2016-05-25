@@ -1,129 +1,85 @@
 #!/usr/bin/python
-
-from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
-from urlparse import urlparse, parse_qs
-from os import curdir, sep
+from flask import Flask, render_template, send_file, redirect, request
 import threading
 import time
 import os
 
-PORT = 8080
+app = Flask(__name__, static_url_path='/static')
 
-class Handler(BaseHTTPRequestHandler):
+#Static Files
+@app.route('/<path:path>')
+def static_proxy(path):
+    return app.send_static_file(path)
 
-    ENABLE_THREAD = None
+#Home
+@app.route('/')
+def home():
+    return app.send_static_file('index.html')
 
-    def do_GET(self):
+#Get URL Image
+@app.route("/address", methods=['GET'])
+def get_url():
+    parameters = request.args
+    ENABLE_THREAD = True
+    webkit2png_arguments = make_arguments(parameters)
+    screenshot_name = time.strftime("%Y%m%d%H%M%S") + '.png'
+    webkit2png(parameters, screenshot_name, ENABLE_THREAD)
 
-        self.ENABLE_THREAD = False
-        url = self.path
-        parameters = parse_qs(urlparse(url).query)
+    return render_template('url.html', address=request.url_root + 'static/screenshots/' + screenshot_name)
 
-        #Static Files
-        if url == "/":
-            url = "/index.html"
+#Get Image
+@app.route("/image", methods=['GET'])
+def get_image():
+    parameters = request.args
+    ENABLE_THREAD = False
+    webkit2png_arguments = make_arguments(parameters)
+    screenshot_name = time.strftime("%Y%m%d%H%M%S") + '.png'
+    webkit2png(parameters, screenshot_name, ENABLE_THREAD)
 
-        if 'geturl' in self.path:
-            self.ENABLE_THREAD = True
+    return send_file(os.getcwd() + '/static/screenshots/'+ screenshot_name, mimetype='image/png')
 
-        try:
-            send_reply = False
-            param_validate = False
+def make_arguments(parameters):
+    arguments_allowed = {'url':None, 'width':None,'height':None,'wait':None,'transparent':None,'aspect':None}
+    output = ' -f png '
+    go = False
 
-            if url.endswith(".html"):
-                mimetype = 'text/html'
-                send_reply = True
-            elif url.endswith(".png"):
-                mimetype = 'image/png'
-                send_reply = True
-            elif url.endswith(".js"):
-                mimetype = 'application/javascript'
-                send_reply = True
-            elif url.endswith(".css"):
-                mimetype = 'text/css'
-                send_reply = True
-            else:
-                check_param = self.check_parameters(parameters)
-                if check_param:
-                    send_reply = True
-                    param_validate = True
-                    mimetype = 'image/png'
+    for argument in arguments_allowed.keys():
+        if parameters.get(argument, None) != None:
+            arguments_allowed[argument] = 'filled'
 
-            if send_reply == True:
+    if arguments_allowed['url'] == 'filled':
+        output = output + parameters.get('url',None) + ' '
 
-                if param_validate == True:
-                    now = time.strftime("%Y%m%d%H%M%S") + '.png'
-                    self.webkit2png(parameters,now)
-                    f = open(os.getcwd() + '/screenshots/' + now)
-                else:
-                    f = open(curdir + sep + url)
+    if arguments_allowed['width'] == 'filled' and arguments_allowed['height'] == None:
+        output = output + '-g ' + parameters.get('width') + ' 768 '
+    elif arguments_allowed['height'] == 'filled' and arguments_allowed['width'] == None:
+        output = output + '-g ' + '900 ' + parameters.get('height')
+    elif arguments_allowed['width'] and arguments_allowed['height'] == 'filled':
+        output = output + '-g ' + parameters.get('width') + ' ' + parameters.get('height') + ' '
 
-                self.send_response(200)
-                self.send_header('Content-type',mimetype)
-                self.end_headers()
-                self.wfile.write(f.read())
-                f.close()
+    if arguments_allowed['wait'] == 'filled':
+        output = output + '-w ' + parameters.get('wait') + ' '
+    if arguments_allowed['transparent'] == 'filled':
+        output = output + '-T '
+    if arguments_allowed['aspect'] == 'filled':
+        output = output + '--aspect-ratio=' + parameters.get('aspect') + ' '
 
-            return
-        except IOError:
-            self.send_error(404,'File Not Found: %s' % url)
+    return output + '-o ' # Output File
 
-    def check_parameters(self,parameters):
-        paraments_allowed = ['url', 'width','height', 'format','scale','wait','transparent','aspect']
-        result = False
-
-        for param in parameters.keys():
-            if param in paraments_allowed:
-                result = True
-
-        return result
-
-    def make_arguments(self,parameters={}):
-        arguments_allowed = ['url', 'width','height','wait','transparent','aspect']
-        arguments = parameters.keys()
-        output = ' -f png '
-        go = False
-
-        for argument in arguments:
-            if argument in arguments_allowed:
-                go = True
-
-        if go == True:
-
-            if arguments_allowed[0] in arguments:
-                output = output + parameters[arguments_allowed[0]][0] + ' '
-            if arguments_allowed[1] in arguments and arguments_allowed[2] in argument:
-                output = output + '-g ' + parameters[arguments_allowed[1]][0] + ' ' + parameters[arguments_allowed[2]][0] + ' '
-            elif arguments_allowed[1] in arguments:
-                output = output + '-g ' + parameters[arguments_allowed[1]][0] + ' 768 '
-            if arguments_allowed[3] in arguments:
-                output = output + '-w ' + parameters[arguments_allowed[3][0] + ' ' ]
-            if arguments_allowed[4] in arguments:
-                output = output + '-T '
-            if arguments_allowed[5] in arguments:
-                output = output + '--aspect-ratio=' + parameters[arguments_allowed[5]][0] + ' '
-
-        return output + '-o ' # Output File
-
-    def webkit2png(self,parameters={},now=''):
-
-        arguments = self.make_arguments(parameters)
-        directory_screenshots = os.getcwd() + "/screenshots/" + now
-
-        if self.ENABLE_THREAD == True:
-            t = threading.Thread(target=os.system, args=("webkit2png" + arguments + directory_screenshots,))
-            t.start()
-        else:
-            os.system("webkit2png" + arguments + directory_screenshots)
+def webkit2png(parameters, now, ENABLE_THREAD):
+    arguments = make_arguments(parameters)
+    directory_screenshots = os.getcwd() + "/static/screenshots/" + now
+    if ENABLE_THREAD == True:
+        t = threading.Thread(target=os.system, args=("webkit2png" + arguments + directory_screenshots,))
+        t.start()
+    else:
+        os.system("webkit2png" + arguments + directory_screenshots)
 
 def main():
     try:
-        server = HTTPServer(('',PORT),Handler)
-        print 'Started HTTPServer on port ',PORT
-        server.serve_forever()
-    except KeyboardInterrupt:
-        print ' | Close received, shutting down the web server'
-        server.socket.close()
+        app.run()
+    except Exception:
+        print '** Error ** | shutting down the web server'
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

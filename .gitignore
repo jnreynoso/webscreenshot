@@ -89,4 +89,4 @@ ENV/
 
 # Add for me
 webkit2png.log
-screenshots
+static/screenshots
